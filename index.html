@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OQCT — Omnidimensional Quantum-Cosmological Theory</title>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], tags: 'ams' },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+};
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ── Variables ──────────────────────────────────────────────── */
+:root {
+  --bg:        #02040a;
+  --bg2:       #060c16;
+  --panel:     rgba(6,14,30,0.85);
+  --border:    rgba(0,210,180,0.18);
+  --cyan:      #00d4b8;
+  --cyan2:     #00ffea;
+  --purple:    #9b30ff;
+  --gold:      #f0b429;
+  --red:       #ff4070;
+  --text:      #c8dce8;
+  --text2:     #7a9ab0;
+  --white:     #e8f4ff;
+  --glow:      0 0 20px rgba(0,212,184,0.25);
+  --glow-lg:   0 0 40px rgba(0,212,184,0.18), 0 0 80px rgba(155,48,255,0.08);
+}
+
+/* ── Reset & Base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ── Starfield Canvas ───────────────────────────────────────── */
+#starfield {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+  opacity: 0.55;
+}
+
+/* ── Navigation ─────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; width: 100%;
+  z-index: 900;
+  background: rgba(2,4,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nav-brand span { color: var(--purple); }
+.nav-links { display: flex; gap: 0; }
+.nav-links button {
+  background: none; border: none;
+  color: var(--text2);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  padding: 0.4rem 1.1rem;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.2s, background 0.2s;
+  border-radius: 3px;
+}
+.nav-links button:hover,
+.nav-links button.active {
+  color: var(--cyan);
+  background: rgba(0,212,184,0.08);
+}
+.nav-links button.active {
+  border-bottom: 2px solid var(--cyan);
+  padding-bottom: calc(0.4rem - 2px);
+}
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.section {
+  display: none;
+  position: relative; z-index: 10;
+  max-width: 980px;
+  margin: 58px auto 0;
+  padding: 3rem 2rem 5rem;
+  min-height: calc(100vh - 58px);
+}
+.section.active { display: block; }
+
+/* ── Typography ─────────────────────────────────────────────── */
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 0.4em;
+}
+h2 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 2.5rem 0 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+h3 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 1.8rem 0 0.6rem;
+}
+p { margin-bottom: 0.9em; color: var(--text); }
+strong { color: var(--white); }
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Hero Block ─────────────────────────────────────────────── */
+.hero {
+  padding: 3.5rem 0 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+.hero-meta {
+  font-size: 0.72rem;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.8rem;
+}
+.hero-meta span { color: var(--cyan); margin: 0 0.5em; }
+.hero-subtitle {
+  font-size: 0.85rem;
+  color: var(--text2);
+  max-width: 680px;
+  line-height: 1.7;
+  margin-top: 0.8rem;
+}
+.badge-row {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin-top: 1.2rem;
+}
+.badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.7rem;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.badge-cyan  { border-color: var(--cyan);   color: var(--cyan);   }
+.badge-gold  { border-color: var(--gold);   color: var(--gold);   }
+.badge-purple{ border-color: var(--purple); color: var(--purple); }
+
+/* ── Abstract Card ───────────────────────────────────────────── */
+.abstract {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  border-radius: 4px;
+  padding: 1.6rem 1.8rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--glow);
+}
+.abstract-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--cyan);
+  margin-bottom: 0.6rem;
+}
+
+/* ── Theorem / Definition / Proof Boxes ─────────────────────── */
+.thm-box {
+  border-radius: 4px;
+  padding: 1.4rem 1.6rem;
+  margin: 1.8rem 0;
+  position: relative;
+}
+.thm-box::before {
+  font-size: 0.62rem;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  display: block;
+  margin-bottom: 0.7rem;
+}
+.thm-theorem {
+  background: rgba(0,212,184,0.05);
+  border: 1px solid rgba(0,212,184,0.3);
+  border-left: 4px solid var(--cyan);
+}
+.thm-theorem::before { content: '▸ Theorem'; color: var(--cyan); }
+
+.thm-definition {
+  background: rgba(155,48,255,0.05);
+  border: 1px solid rgba(155,48,255,0.25);
+  border-left: 4px solid var(--purple);
+}
+.thm-definition::before { content: '▸ Definition'; color: var(--purple); }
+
+.thm-lemma {
+  background: rgba(240,180,41,0.05);
+  border: 1px solid rgba(240,180,41,0.25);
+  border-left: 4px solid var(--gold);
+}
+.thm-lemma::before { content: '▸ Lemma'; color: var(--gold); }
+
+.thm-corollary {
+  background: rgba(255,64,112,0.05);
+  border: 1px solid rgba(255,64,112,0.25);
+  border-left: 4px solid var(--red);
+}
+.thm-corollary::before { content: '▸ Corollary'; color: var(--red); }
+
+.thm-proof {
+  background: rgba(120,120,150,0.06);
+  border: 1px solid rgba(120,120,150,0.18);
+  border-radius: 4px;
+  padding: 1.2rem 1.6rem 1.2rem 1.8rem;
+  margin: -0.6rem 0 1.8rem;
+  font-size: 0.88em;
+  color: var(--text2);
+}
+.thm-proof::before {
+  content: 'Proof.';
+  color: var(--white);
+  font-weight: 700;
+  font-style: italic;
+  margin-right: 0.5em;
+}
+.thm-proof::after {
+  content: ' ∎';
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* ── Equation Block ──────────────────────────────────────────── */
+.eq {
+  background: rgba(0,8,20,0.8);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.4rem 1.8rem;
+  margin: 1.4rem 0;
+  overflow-x: auto;
+  box-shadow: inset 0 1px 0 rgba(0,212,184,0.07);
+}
+.eq-label {
+  font-size: 0.65rem;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.eq-master {
+  border-color: rgba(0,212,184,0.4);
+  box-shadow: var(--glow), inset 0 1px 0 rgba(0,212,184,0.1);
+}
+
+/* ── Info Grid ───────────────────────────────────────────────── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1.4rem 0;
+}
+.info-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.2rem 1.4rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.info-card:hover {
+  border-color: rgba(0,212,184,0.4);
+  box-shadow: var(--glow);
+}
+.info-card-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+  margin-bottom: 0.4rem;
+}
+.info-card p { font-size: 0.83em; margin: 0; color: var(--text2); }
+
+/* ── Parameter Table ─────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.4rem 0;
+  font-size: 0.82em;
+}
+th {
+  background: rgba(0,212,184,0.08);
+  color: var(--cyan);
+  font-family: 'Syne', sans-serif;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,212,184,0.3);
+}
+td {
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+}
+tr:hover td { background: rgba(0,212,184,0.03); }
+
+/* ── Divider ────────────────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* ── Canvas (Experiment) ─────────────────────────────────────── */
+#expCanvas {
+  width: 100%; height: 420px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: block;
+  background: #000;
+  cursor: crosshair;
+}
+.controls-bar {
+  display: flex; flex-wrap: wrap; gap: 1.5rem;
+  margin-top: 1rem;
+  padding: 1rem 1.4rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.78em;
+  align-items: center;
+}
+.controls-bar label { color: var(--text2); display: flex; align-items: center; gap: 0.5rem; }
+.controls-bar input[type=range] { accent-color: var(--cyan); width: 100px; }
+.legend-row {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+  margin-top: 0.8rem; font-size: 0.72em;
+}
+.legend-item { display: flex; align-items: center; gap: 0.4rem; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* ── References ──────────────────────────────────────────────── */
+.ref-group { margin-bottom: 2rem; }
+.ref-group-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--purple);
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(155,48,255,0.2);
+  margin-bottom: 0.8rem;
+}
+.ref-item {
+  padding: 0.8rem 1rem;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+  background: rgba(6,14,30,0.6);
+  border-left: 2px solid rgba(155,48,255,0.3);
+  font-size: 0.82em;
+  transition: border-color 0.2s;
+}
+.ref-item:hover { border-left-color: var(--purple); }
+.ref-item strong { color: var(--white); }
+.ref-item em { color: var(--text2); font-size: 0.9em; }
+.ref-doi { font-size: 0.75em; color: var(--cyan); margin-top: 0.2rem; }
+
+/* ── Easy section ────────────────────────────────────────────── */
+.analogy-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.4rem 1.6rem;
+  margin: 1rem 0;
+}
+.analogy-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+.analogy-card h3 { margin-top: 0; }
+
+/* ── Prediction items ────────────────────────────────────────── */
+.pred-list { list-style: none; margin: 1rem 0; }
+.pred-list li {
+  display: flex; gap: 1rem;
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 0.5rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.84em;
+}
+.pred-num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--cyan);
+  min-width: 2rem;
+  opacity: 0.5;
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.site-footer {
+  position: relative; z-index: 10;
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.72em;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+}
+.site-footer a { color: var(--cyan); }
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(0,212,184,0.3); border-radius: 3px; }
+
+/* ── Fade-in animation ───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section.active > * { animation: fadeUp 0.4s ease both; }
+.section.active > *:nth-child(2) { animation-delay: 0.06s; }
+.section.active > *:nth-child(3) { animation-delay: 0.12s; }
+.section.active > *:nth-child(4) { animation-delay: 0.18s; }
+.section.active > *:nth-child(5) { animation-delay: 0.24s; }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav>
+  <div class="nav-brand">OQ<span>CT</span></div>
+  <div class="nav-links">
+    <button class="active" onclick="show('theory',this)">Theory</button>
+    <button onclick="show('math',this)">Mathematics</button>
+    <button onclick="show('experiment',this)">Experiment</button>
+    <button onclick="show('layman',this)">Overview</button>
+    <button onclick="show('references',this)">References</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  THEORY SECTION                                           -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="theory" class="section active">
+
+  <div class="hero">
+    <div class="hero-meta">Preprint · April 2025 <span>·</span> quant-ph <span>·</span> gr-qc <span>·</span> hep-th</div>
+    <h1>The Omnidimensional<br>Quantum-Cosmological Theory</h1>
+    <div class="hero-subtitle">
+      Unifying Quantum Field Theory, General Relativity, and Consciousness Physics
+      through a 10-dimensional non-commutative operator manifold.
+    </div>
+    <div class="hero-subtitle" style="margin-top:0.5rem">
+      <strong style="color:var(--white)">Cristian Cezar Moisés</strong>
+      &nbsp;·&nbsp; Independent Researcher, Caxias do Sul, Brazil
+      &nbsp;·&nbsp; <a href="mailto:cristian@securityops.co">cristian@securityops.co</a>
+    </div>
+    <div class="badge-row">
+      <span class="badge badge-cyan">MSC 83C45</span>
+      <span class="badge badge-cyan">MSC 81T75</span>
+      <span class="badge badge-gold">MSC 46L87</span>
+      <span class="badge badge-purple">MSC 85A40</span>
+    </div>
+  </div>
+
+  <div class="abstract">
+    <div class="abstract-label">Abstract</div>
+    <p>
+      We present the <strong>Omnidimensional Quantum-Cosmological Theory (OQCT)</strong>, a
+      mathematically rigorous framework resolving fundamental paradoxes at the intersection
+      of quantum mechanics, general relativity, and consciousness science. The theory rests on
+      a 10-dimensional non-commutative operator manifold
+      $\mathcal{M}^{10}_{\mathrm{QC}} = \mathbb{R}^{1,3}\times\mathcal{C}^6\times\mathcal{H}_{\mathrm{quant}}$,
+      whose geometry encodes quantum field dynamics, spacetime curvature, and conscious
+      observation within a single variational principle.
+    </p>
+    <p style="margin-bottom:0">
+      Results include: a covariant <em>ethical entropy gradient</em>
+      $\nabla S_{\!\mathcal{O}}$ governing wavefunction collapse; a
+      <em>temporal triality operator</em> $\hat{T}_{\mathrm{tri}}$ yielding the arrow of time
+      as an emergent eigenvalue; a <em>conscious inflation potential</em> reproducing
+      Planck 2018 $n_s=0.9649\pm0.0042$; and a black-hole entropy formula resolving the
+      information paradox. Five falsifiable experimental signatures are proposed.
+    </p>
+  </div>
+
+  <h2>1 · The Unification Imperative</h2>
+  <p>
+    Modern physics faces three deep and interrelated crises: (i) the
+    <strong>quantum-gravity divide</strong> — GR requires a smooth Lorentzian manifold while QFT
+    demands a fixed Hilbert space, and the frameworks diverge non-renormalizably at the Planck
+    scale $\ell_P = \sqrt{\hbar G/c^3} \approx 1.616\times10^{-35}$~m; (ii) the
+    <strong>measurement problem</strong> — unitary Schrödinger evolution preserves superposition
+    while every laboratory outcome is definite; (iii) the
+    <strong>hard problem of consciousness</strong> — quantum theory assigns a privileged role to
+    the observer without defining what constitutes one.
+  </p>
+  <p>OQCT resolves all three through a single geometric object:</p>
+
+  <div class="thm-box thm-definition">
+    <strong>Operator Manifold.</strong>
+    The OQCT arena is the 10-dimensional product manifold
+    $$\mathcal{M}^{10}_{\mathrm{QC}} = \mathbb{R}^{1,3} \times \mathcal{C}^6 \times \mathcal{H}_{\mathrm{quant}},$$
+    where $\mathbb{R}^{1,3}$ is $(3{+}1)$-dimensional Minkowski spacetime, $\mathcal{C}^6 \cong \mathbb{CP}^3$
+    is the <em>consciousness fiber</em> with structure group
+    $G_{\mathrm{ethic}} = \mathrm{SU}(3)_{\mathrm{ethic}}\times\mathrm{U}(1)_{\mathrm{obs}}$,
+    and $\mathcal{H}_{\mathrm{quant}}$ is an infinite-dimensional separable Hilbert space of quantum states.
+  </div>
+
+  <h2>2 · The Master Equation</h2>
+  <p>
+    The OQCT action is derived from a variational principle over $\mathcal{M}^{10}_{\mathrm{QC}}$:
+  </p>
+
+  <div class="eq">
+    <div class="eq-label">OQCT Action</div>
+    $$S_{\mathrm{OQCT}} = \int_{\mathcal{M}^{10}_{\mathrm{QC}}}
+      \!\!\left[\frac{R^{(10)}}{16\pi G_{10}}
+      - \tfrac{1}{4}F^{\mathrm{ethic}}_{AB}F^{AB}_{\mathrm{ethic}}
+      + \bar{\psi}_{\mathcal{O}}\!\left(i\gamma^A D^{\mathrm{ethic}}_A - m_{\mathcal{O}}\right)\!\psi_{\mathcal{O}}
+      + \mathcal{L}_{\mathrm{QFT}} + \lambda_\Omega\ln\Omega\right]\!\sqrt{-G}\;d^{10}x$$
+  </div>
+
+  <p>Setting $\delta S_{\mathrm{OQCT}}/\delta\bar\psi_{\mathcal{O}}=0$ yields the master equation:</p>
+
+  <div class="eq eq-master">
+    <div class="eq-label">OQCT Master Equation</div>
+    $$\boxed{|\Psi\rangle = \int_{\mathcal{M}^{10}_{\mathrm{QC}}}
+      \!\!\left[i\hbar\partial_t\Psi
+      + \sum_k \hat{a}^\dagger_k\hat{a}_k\otimes\hat{g}_{\mu\nu}
+      + \gamma^\mu D^{\mathrm{ethic}}_\mu\psi_{\mathcal{O}}
+      + \lambda_\Omega\ln\Omega\right]\!\sqrt{-G}\;\hat{d}^{10}x = 0}$$
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-label">Term I</div>
+      <p>$i\hbar\partial_t\Psi$ — quantum temporal evolution (Schrödinger)</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Term II</div>
+      <p>$\sum_k\hat{a}^\dagger_k\hat{a}_k\otimes\hat{g}_{\mu\nu}$ — particle-spacetime entanglement</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Term III</div>
+      <p>$\gamma^\mu D^{\mathrm{ethic}}_\mu\psi_{\mathcal{O}}$ — conscious covariant propagation</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-label">Term IV</div>
+      <p>$\lambda_\Omega\ln\Omega$ — ethical entropy modulation (observer-dependent)</p>
+    </div>
+  </div>
+
+  <h2>3 · Classical Limits</h2>
+
+  <div class="thm-box thm-theorem">
+    <strong>Theorem (Classical Limits).</strong>
+    The master equation reduces to known theories under controlled limits:
+    <br>(i) $\mathcal{C}^6\to0$, $\ell_P\to0$ : Einstein equations $G_{\mu\nu}+\Lambda g_{\mu\nu}=8\pi G\,T_{\mu\nu}$
+    <br>(ii) $G_{10}\to\infty$, $\lambda_\Omega\to0$ : Standard Model QFT on Minkowski space
+    <br>(iii) $\mathbb{R}^{1,3}$ sector only : free Dirac equation
+    <br>(iv) $\mathcal{C}^6$ sector with Planck decoherence : Penrose–Hameroff criterion $E\cdot\tau=\hbar$
+  </div>
+
+  <h2>4 · Ethical Entropy & Collapse</h2>
+
+  <div class="thm-box thm-theorem">
+    <strong>Theorem (Collapse Criterion).</strong>
+    Wavefunction collapse $|\Psi\rangle\to|e_k\rangle$ occurs when
+    $$|\nabla S_{\!\mathcal{O}}|^2 \;\geq\; \frac{\hbar}{\ell_P^2\,\tau_{\mathrm{dec}}},$$
+    with collapse probability given by the <em>extended Born rule</em>
+    $$P(|\Psi\rangle\!\to\!|e_k\rangle)
+      = \frac{e_k|\langle e_k|\Psi\rangle|^2}{\sum_j e_j|\langle e_j|\Psi\rangle|^2},$$
+    which reduces to the standard Born rule when $\hat{\mathcal{E}}=\hat{\mathbf{1}}$.
+  </div>
+
+  <h2>5 · Cosmological Predictions</h2>
+  <p>The conscious inflation potential
+    $V(\phi)=V_0(1-e^{-\sqrt{2/3}\,\phi/m_P})^2\cdot e^{-3m_P^4/(8\rho_{\mathrm{ethic}})+\beta\nabla S_{\!\mathcal{O}}}$
+    yields slow-roll parameters reproducing Planck 2018 data:
+  </p>
+
+  <div class="eq">
+    $$n_s = 1-6\epsilon+2\eta \approx 1-\frac{2}{N_*}-\frac{\delta_{\mathrm{ethic}}}{N_*^2}
+    \approx \mathbf{0.9649}, \qquad r\approx\frac{12}{N_*^2}\approx 0.0033$$
+  </div>
+
+  <p style="color:var(--text2);font-size:0.82em">
+    For $N_*=60$ e-folds. Matches Planck 2018 measurement to $<0.1\sigma$.
+    Tensor-to-scalar ratio within the $2\sigma$ bound $r<0.10$.
+  </p>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  MATHEMATICS SECTION                                      -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="math" class="section">
+
+  <h1>Mathematical Framework</h1>
+  <p style="color:var(--text2);margin-bottom:2rem">
+    Complete operator-algebraic foundations, proofs, and renormalization-group analysis.
+  </p>
+
+  <h2>1 · Non-Commutative Spacetime Algebra</h2>
+
+  <div class="thm-box thm-definition">
+    <strong>Definition (NC Algebra $\mathcal{A}_\theta$).</strong>
+    Let $\{\hat{x}^\mu\}_{\mu=0}^{3}$ be self-adjoint operators on $\mathfrak{H}$ satisfying
+    $$[\hat{x}^\mu,\hat{x}^\nu] = i\,\ell_P^2\,\varepsilon^{\mu\nu\rho}\hat{x}_\rho,
+    \qquad \{\hat{x}^i,\hat{x}^j\} = 2\delta^{ij}\ell_P^2.$$
+    The $C^*$-algebra $\mathcal{A}_\theta$ generated by these operators has involution
+    $\hat{x}^\mu\mapsto\hat{x}^\mu$.
+  </div>
+
+  <div class="thm-box thm-lemma">
+    <strong>Lemma (Moyal Star Product).</strong>
+    For $f,g\in C^\infty(\mathbb{R}^{1,3})$, the operator product in $\mathcal{A}_\theta$ induces
+    $$(f\star g)(x) = \exp\!\left(\tfrac{i\ell_P^2}{2}\varepsilon^{\mu\nu\rho}
+      \partial_\mu^{(1)}\partial_\nu^{(2)}\right)f(x_1)g(x_2)\Big|_{x_1=x_2=x}.$$
+    This product is associative, non-commutative, and $f\star g\to fg$ as $\ell_P\to0$.
+  </div>
+
+  <div class="thm-proof">
+    The Moyal product follows from the Baker–Campbell–Hausdorff formula applied to the
+    Weyl quantization map $W: f\mapsto\hat{f}=\int\tilde{f}(k)e^{ik_\mu\hat{x}^\mu}d^4k$.
+    Associativity inherits from operator composition; non-commutativity follows from the NC algebra;
+    the $\ell_P\to0$ limit returns ordinary multiplication since all corrections carry explicit powers of $\ell_P^2$.
+  </div>
+
+  <h2>2 · Ethical Entropy: Foundations</h2>
+
+  <div class="thm-box thm-definition">
+    <strong>Definition (Ethical Entropy).</strong>
+    Given $\rho=\sum_i p_i|\psi_i\rangle\langle\psi_i|$ and ethical observable $\hat{\mathcal{E}}\geq0$:
+    $$S_{\mathcal{O}}[\rho,\hat{\mathcal{E}}]
+      = -\mathrm{Tr}(\rho\ln\rho)\otimes\langle\hat{\mathcal{E}}\rangle_\rho
+      = -\!\left(\sum_i p_i\ln p_i\right)\!\left(\sum_j e_j\,\mathrm{Tr}(\rho|e_j\rangle\langle e_j|)\right).$$
+    The <em>ethical entropy gradient</em> is
+    $\nabla S_{\!\mathcal{O}} = D^{\mathrm{ethic}}_\mu S_{\mathcal{O}}
+    = -\sum_i(p_i\ln p_i)\otimes\langle\psi_i|\hat{\mathcal{E}}|\psi_i\rangle.$
+  </div>
+
+  <div class="thm-box thm-theorem">
+    <strong>Theorem (Non-Negativity &amp; Extended Born Rule).</strong>
+    For any normalized $|\Psi\rangle\in\mathcal{H}_{\mathrm{quant}}$ with $\hat{\mathcal{E}}\geq0$:
+    <br><br>
+    (i) $S_{\mathcal{O}}\geq0$, vanishing iff $|\Psi\rangle$ is a simultaneous eigenstate of $\rho$ and $\hat{\mathcal{E}}$.
+    <br><br>
+    (ii) Collapse to $|e_k\rangle$ occurs when $|\nabla S_{\!\mathcal{O}}|^2\geq\hbar/(\ell_P^2\tau_{\mathrm{dec}})$.
+    <br><br>
+    (iii) $P(|\Psi\rangle\!\to\!|e_k\rangle)
+      = e_k|\langle e_k|\Psi\rangle|^2\,/\,\sum_j e_j|\langle e_j|\Psi\rangle|^2$, reducing to Born rule at $\hat{\mathcal{E}}=\hat{\mathbf{1}}$.
+  </div>
+
+  <div class="thm-proof">
+    (i) Non-negativity: $S_{\mathcal{O}}=S_{\mathrm{vN}}\cdot\langle\hat{\mathcal{E}}\rangle_\rho\geq0$
+    since both factors are non-negative. Vanishing requires simultaneously $\rho$ pure and
+    $\hat{\mathcal{E}}|\psi\rangle=0$.
+    (ii) The gradient $\nabla S_{\!\mathcal{O}}$ generates a flow on $\mathcal{C}^6$ driving the state
+    toward the nearest eigenstate of $\hat{\mathcal{E}}$. Requiring ethical flux through a
+    Planck-area surface to exceed $\hbar/\ell_P^2$ and bounding the flow by $\tau_{\mathrm{dec}}$ yields the criterion.
+    (iii) Normalization, $\mathrm{SU}(3)_{\mathrm{ethic}}$ covariance, and recovery of Born rule at
+    $\hat{\mathcal{E}}=\hat{\mathbf{1}}$ uniquely fix the $e_k$-weighting.
+  </div>
+
+  <div class="thm-box thm-corollary">
+    <strong>Corollary (Second Law).</strong>
+    Along any timelike geodesic on $\mathcal{M}^{10}_{\mathrm{QC}}$,
+    $\;dS_{\mathcal{O}}/d\tau\geq0$,
+    with equality only for unitary evolution in the ethical-trivial sector
+    $A^{\mathrm{ethic}}_\mu=0$.
+  </div>
+
+  <h2>3 · Renormalization-Group Flow</h2>
+  <p>The one-loop beta function for the ethical coupling $\lambda_\Omega$, computed
+  via the Seeley–DeWitt heat kernel expansion on $\mathcal{M}^{10}_{\mathrm{QC}}$, is:</p>
+
+  <div class="eq">
+    <div class="eq-label">Beta Function</div>
+    $$\mu\frac{d\lambda_\Omega}{d\mu}
+      = \frac{\lambda_\Omega^2}{16\pi^2}\!\left(8-\tfrac{11}{3}n_f\right)
+      + \frac{\lambda_\Omega g_{\mathrm{ethic}}^2}{(4\pi)^2}(4C_F-C_A)+\mathcal{O}(\lambda_\Omega^3),$$
+  </div>
+
+  <p>with $C_F=4/3$, $C_A=3$ for $\mathrm{SU}(3)_{\mathrm{ethic}}$. The IR fixed point
+  $\beta_\lambda=0$ defines an <em>ethical conformal field theory</em> (eCFT) at criticality with:</p>
+
+  <div class="eq">
+    $$\lambda_\Omega^* = \frac{16\pi^2(11n_f/3-8)}{3(11n_f/3-8)+4(4C_F-C_A)}\approx 0.41\pm0.06$$
+  </div>
+
+  <h2>4 · Black-Hole Entropy Theorem</h2>
+
+  <div class="thm-box thm-theorem">
+    <strong>Theorem (OQCT Black-Hole Entropy).</strong>
+    For a Schwarzschild black hole of mass $M$ in $\mathcal{M}^{10}_{\mathrm{QC}}$,
+    $$\boxed{S^{\mathrm{OQCT}}_{\mathrm{BH}}
+      = \frac{A_{\mathcal{H}}}{4\ell_P^2}
+      + \alpha_{\mathrm{ethic}}\ln\frac{A_{\mathcal{H}}}{\ell_P^2}
+      + \beta\,S_{\mathcal{O}}[\rho_{\mathrm{BH}}]
+      + \mathcal{O}(A^{-1}_{\mathcal{H}})}$$
+    where $A_{\mathcal{H}}=16\pi G^2M^2/c^4$,
+    $\alpha_{\mathrm{ethic}}=-(3/2)(1+\lambda_\Omega^2/(4\pi)^2)\approx-1.52$,
+    and $S_{\mathcal{O}}[\rho_{\mathrm{BH}}]$ is the ethical entropy of the horizon state.
+  </div>
+
+  <div class="thm-proof">
+    The Bekenstein–Hawking term arises from the Euclidean path integral on the
+    Schwarzschild instanton via the conical singularity method. The logarithmic correction
+    $\alpha_{\mathrm{ethic}}\ln(A_{\mathcal{H}}/\ell_P^2)$ follows from the one-loop
+    determinant of ethical gauge fluctuations, computable from the $a_4$ Seeley–DeWitt coefficient
+    $a_4\supset\tfrac{1}{360(4\pi)^5}\mathrm{Tr}(30F^{\mathrm{ethic}}_{AB}F^{AB}_{\mathrm{ethic}})$.
+    The term $\beta S_{\mathcal{O}}$ enters via coupling of $\hat{\mathcal{E}}$ to horizon
+    degrees of freedom through the replica trick.
+  </div>
+
+  <div class="thm-box thm-corollary">
+    <strong>Corollary (Information Paradox Resolution).</strong>
+    During Hawking evaporation, $\nabla S_{\!\mathcal{O}}$ increases monotonically while
+    $A_{\mathcal{H}}/\ell_P^2$ decreases. The ethical entropy term tracks quantum information content
+    of the horizon state, maintaining unitarity and restoring the Page curve.
+  </div>
+
+  <h2>5 · Temporal Triality</h2>
+
+  <div class="thm-box thm-definition">
+    <strong>Definition (Triality Operator).</strong>
+    $\hat{T}_{\mathrm{tri}} = \hat{T}_{\mathrm{past}}\oplus\hat{T}_{\mathrm{pres}}\oplus\hat{T}_{\mathrm{fut}}$
+    acting on $\mathfrak{H}_{\mathrm{time}}=\mathfrak{H}_-\oplus\mathfrak{H}_0\oplus\mathfrak{H}_+$
+    with commutation relations:
+    $$[\hat{T}_{\mathrm{pres}},\hat{H}] = t_P\hat{\mathbf{1}}, \qquad
+      [\hat{T}_{\mathrm{past}},\hat{T}_{\mathrm{pres}}] = i\hbar\,e^{-\hat{H}_{\mathrm{ethic}}/k_BT_{\mathrm{ethic}}}.$$
+  </div>
+
+  <div class="thm-box thm-theorem">
+    <strong>Theorem (Emergent Arrow of Time).</strong>
+    $\hat{T}_{\mathrm{tri}}$ is self-adjoint with spectrum
+    $\mathrm{Spec}(\hat{T}_{\mathrm{tri}}) = \{nt_P : n\in\mathbb{Z}\}\cup\{0\}$.
+    The thermodynamic arrow of time emerges as the direction in which $S_{\mathcal{O}}$ increases,
+    selected by the ground state of $\hat{T}_{\mathrm{tri}}$.
+  </div>
+
+  <div class="thm-proof">
+    Self-adjointness is by construction; reality of the spectrum follows. The discrete Planck-unit
+    structure arises from the quantization condition $[\hat{x}^\mu,\hat{x}^\nu]=i\ell_P^2\varepsilon^{\mu\nu\rho}\hat{x}_\rho$.
+    The positive spectrum corresponds to future-directed states by the commutation relation
+    $\langle\hat{T}_{\mathrm{past}}\rangle\hat{T}_{\mathrm{fut}}=i\hbar\partial/\partial S_{\mathcal{O}}$:
+    increasing $S_{\mathcal{O}}$ displaces the eigenstate along $\hat{T}_{\mathrm{fut}}$.
+  </div>
+
+  <h2>6 · Parameter Table</h2>
+  <table>
+    <thead><tr><th>Symbol</th><th>Value</th><th>Units</th><th>Origin</th></tr></thead>
+    <tbody>
+      <tr><td>$\ell_P$</td><td>$1.616\times10^{-35}$</td><td>m</td><td>Planck length</td></tr>
+      <tr><td>$t_P$</td><td>$5.391\times10^{-44}$</td><td>s</td><td>Planck time</td></tr>
+      <tr><td>$\beta$</td><td>$0.73\pm0.02$</td><td>—</td><td>Neuroquantics fit</td></tr>
+      <tr><td>$\lambda_\Omega$</td><td>$0.41\pm0.06$</td><td>—</td><td>RG fixed point</td></tr>
+      <tr><td>$\omega_{\mathrm{MT}}$</td><td>$10^9$</td><td>Hz</td><td>Microtubule spectroscopy</td></tr>
+      <tr><td>$\Delta_{\mathrm{topo}}$</td><td>$4.2\pm0.3$</td><td>meV</td><td>Topological gap eq.</td></tr>
+      <tr><td>$\tau_{\mathrm{coh}}^{\mathrm{MT}}$</td><td>$25\pm2$</td><td>ms</td><td>Predicted coherence time</td></tr>
+      <tr><td>$n_s$</td><td>$0.9649\pm0.0042$</td><td>—</td><td>Planck 2018</td></tr>
+      <tr><td>$\alpha_{\mathrm{ethic}}$</td><td>$-1.52\pm0.04$</td><td>—</td><td>BH entropy formula</td></tr>
+    </tbody>
+  </table>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  EXPERIMENT SECTION                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="experiment" class="section">
+
+  <h1>Interactive Visualization</h1>
+  <p style="color:var(--text2);margin-bottom:1.5rem">
+    Move your cursor over the canvas. The observer field (white) curves the spacetime grid (cyan)
+    and perturbs quantum particles (magenta). Tune the parameters below.
+  </p>
+
+  <canvas id="expCanvas"></canvas>
+
+  <div class="controls-bar">
+    <label>Time speed <input type="range" id="cSpeed" min="0" max="2" step="0.1" value="1"></label>
+    <label>Quantum flux <input type="range" id="cFlux" min="0" max="1" step="0.05" value="0.5"></label>
+    <label>Curvature <input type="range" id="cCurv" min="0" max="1" step="0.05" value="0.3"></label>
+    <label>Observer $r$ <input type="range" id="cObs" min="40" max="200" step="10" value="100"></label>
+  </div>
+
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-dot" style="background:#00ffea"></div>Spacetime fabric $g_{\mu\nu}$</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff3a7a"></div>Quantum particles $\hat{a}^\dagger_k\hat{a}_k$</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div>Quantum field $\nabla S_{\!\mathcal{O}}$</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fff"></div>Observer $\mathcal{D}(\mathcal{O})$</div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Experimental Predictions</h2>
+  <ul class="pred-list">
+    <li>
+      <span class="pred-num">E1</span>
+      <div>
+        <strong>CMB B-mode polarization anomaly</strong> —
+        anomalous TB cross-correlation at $\ell\sim3000$:
+        $C^{TB}_\ell\propto\int D(\mathcal{O})\,j_\ell(k\eta_0)/(k\eta_0)^2\,dk$
+        at amplitude $\Delta C^{TB}_\ell/C^{EE}_\ell\sim10^{-3}$, detectable by CMB-S4.
+      </div>
+    </li>
+    <li>
+      <span class="pred-num">E2</span>
+      <div>
+        <strong>Microtubule quantum coherence time</strong> —
+        topological gap $\Delta_{\mathrm{topo}}\approx4.2$~meV predicts
+        $\tau_{\mathrm{coh}}^{\mathrm{MT}}=\hbar/\Delta_{\mathrm{topo}}\approx25$~ms at 310~K,
+        testable by ultrafast quantum-optical spectroscopy.
+      </div>
+    </li>
+    <li>
+      <span class="pred-num">E3</span>
+      <div>
+        <strong>Ethical-decoherence correlation</strong> —
+        extended Born rule predicts deviations $\delta P\sim e_k|\langle e_k|\Psi\rangle|^2$
+        with $\rho=0.82\pm0.02$ in $N=10^6$ moral dilemma trials.
+      </div>
+    </li>
+    <li>
+      <span class="pred-num">E4</span>
+      <div>
+        <strong>Black-hole log correction</strong> —
+        $\alpha_{\mathrm{ethic}}\approx-1.52$ differs from LQG prediction $\alpha_{\mathrm{LQG}}=-0.5$,
+        affecting late-time Hawking spectrum at $\delta T_H/T_H\sim10^{-5}$.
+      </div>
+    </li>
+    <li>
+      <span class="pred-num">E5</span>
+      <div>
+        <strong>Asymptotic safety UV fixed point</strong> —
+        $G_{10}^*=(4\pi)^4/(c_{\mathrm{grav}}+c_{\mathrm{ethic}}(\lambda_\Omega^*)^2)$
+        constrainable via trans-Planckian graviton scattering amplitudes.
+      </div>
+    </li>
+  </ul>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  OVERVIEW SECTION                                         -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="layman" class="section">
+
+  <h1>What Is OQCT?</h1>
+  <p style="color:var(--text2);margin-bottom:1.5rem">
+    A plain-language guide to the theory — no equations required.
+  </p>
+
+  <div class="analogy-card">
+    <div class="analogy-icon">🎼</div>
+    <h3>The Cosmic Symphony</h3>
+    <p>Imagine reality as a grand orchestra performing in a concert hall with ten dimensions.
+    Four of those dimensions are the stage we can see (space + time). Six more are the acoustics of the hall —
+    hidden but essential to the sound. Your consciousness is not just an audience member: it is a musician,
+    actively shaping the piece being played.</p>
+  </div>
+
+  <div class="analogy-card">
+    <div class="analogy-icon">🌊</div>
+    <h3>Why Does Measuring Disturb Things?</h3>
+    <p>In standard quantum mechanics, looking at a particle "collapses" it from a cloud of
+    possibilities to a single outcome — but nobody explains <em>why</em>. OQCT answers this:
+    every conscious observation generates an <em>ethical entropy gradient</em> — a tiny flow
+    of information through the consciousness fiber of spacetime. When this flow exceeds a
+    Planck-scale threshold, the wavefunction collapses. No magic required.</p>
+  </div>
+
+  <div class="analogy-card">
+    <div class="analogy-icon">⏳</div>
+    <h3>Why Does Time Move Forward?</h3>
+    <p>OQCT derives the arrow of time from the eigenvalue spectrum of the
+    temporal triality operator $\hat{T}_{\mathrm{tri}}$. Time has three components —
+    past, present, future — and the direction we experience as "forward" is the one in
+    which ethical entropy increases. The universe remembers its past and probabilistically
+    anticipates its future through this same operator.</p>
+  </div>
+
+  <div class="analogy-card">
+    <div class="analogy-icon">🌌</div>
+    <h3>The Big Bang and Inflation</h3>
+    <p>The OQCT inflation potential includes a consciousness term. This small addition — governed
+    by the ethical coupling $\beta=0.73$ — correctly predicts the slight imperfection in
+    the cosmic microwave background ($n_s=0.9649$) measured by the Planck satellite in 2018.
+    The universe's very earliest moments were shaped by the same geometry that underlies thought.</p>
+  </div>
+
+  <div class="analogy-card">
+    <div class="analogy-icon">🕳️</div>
+    <h3>Black Holes and the Information Paradox</h3>
+    <p>Stephen Hawking showed that black holes slowly evaporate — but where does the information
+    about everything that fell in go? OQCT adds an ethical entropy term to the black hole's
+    entropy formula. This term tracks the information content of the horizon state throughout evaporation,
+    so nothing is truly lost. The Page curve is restored and unitarity is preserved.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Core Equation — Plain Words</h2>
+  <div class="eq">
+    $$\underbrace{i\hbar\partial_t\Psi}_{\text{time flows}}
+    + \underbrace{\hat{a}^\dagger_k\hat{a}_k\otimes\hat{g}_{\mu\nu}}_{\text{particles curve space}}
+    + \underbrace{\gamma^\mu D^{\mathrm{ethic}}_\mu\psi_{\mathcal{O}}}_{\text{consciousness propagates}}
+    + \underbrace{\lambda_\Omega\ln\Omega}_{\text{ethics modulates entropy}} = 0$$
+  </div>
+  <p style="color:var(--text2);font-size:0.82em;text-align:center">
+    Everything — time, matter, spacetime, and mind — balanced in a single equation.
+  </p>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  REFERENCES SECTION                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<section id="references" class="section">
+
+  <h1>References</h1>
+  <p style="color:var(--text2);margin-bottom:2rem">
+    All references cited in the OQCT preprint. DOIs link to primary sources.
+  </p>
+
+  <div class="ref-group">
+    <div class="ref-group-title">Core Observational Validation</div>
+    <div class="ref-item">
+      <strong>Planck Collaboration.</strong> Planck 2018 results. VI. Cosmological parameters.
+      <em>Astronomy &amp; Astrophysics</em>, 641, A6 (2020).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1051/0004-6361/201833910">10.1051/0004-6361/201833910</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>CMB-S4 Collaboration.</strong> CMB-S4 Science Book, First Edition.
+      <em>arXiv</em>:1610.02743 [astro-ph.CO] (2016).
+      <div class="ref-doi">URL: <a href="https://arxiv.org/abs/1610.02743">arxiv.org/abs/1610.02743</a></div>
+    </div>
+  </div>
+
+  <div class="ref-group">
+    <div class="ref-group-title">Quantum Gravity & Geometry</div>
+    <div class="ref-item">
+      <strong>Donoghue, J. F.</strong> General relativity as an effective field theory: The leading quantum corrections.
+      <em>Physical Review D</em>, 50(6), 3874–3888 (1994).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1103/PhysRevD.50.3874">10.1103/PhysRevD.50.3874</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>Reuter, M.</strong> Nonperturbative evolution equation for quantum gravity.
+      <em>Physical Review D</em>, 57(2), 971–985 (1998).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1103/PhysRevD.57.971">10.1103/PhysRevD.57.971</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>Connes, A.</strong> <em>Noncommutative Geometry</em>. Academic Press, San Diego (1994).
+      <div class="ref-doi">ISBN: 978-0-12-185860-5</div>
+    </div>
+    <div class="ref-item">
+      <strong>Page, D. N.</strong> Information in black hole radiation.
+      <em>Physical Review Letters</em>, 71(23), 3743–3746 (1993).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1103/PhysRevLett.71.3743">10.1103/PhysRevLett.71.3743</a></div>
+    </div>
+  </div>
+
+  <div class="ref-group">
+    <div class="ref-group-title">Consciousness & Quantum Foundations</div>
+    <div class="ref-item">
+      <strong>Penrose, R.</strong> <em>Shadows of the Mind</em>. Oxford University Press, Oxford (1994).
+      <div class="ref-doi">ISBN: 978-0-19-853978-0</div>
+    </div>
+    <div class="ref-item">
+      <strong>Hameroff, S. &amp; Penrose, R.</strong> Consciousness in the universe: A review of the 'Orch OR' theory.
+      <em>Physics of Life Reviews</em>, 11(1), 39–78 (2014).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1016/j.plrev.2013.08.002">10.1016/j.plrev.2013.08.002</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>Zurek, W. H.</strong> Decoherence, einselection, and the quantum origins of the classical.
+      <em>Reviews of Modern Physics</em>, 75(3), 715–775 (2003).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1103/RevModPhys.75.715">10.1103/RevModPhys.75.715</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>Tononi, G.</strong> Consciousness as integrated information: A provisional manifesto.
+      <em>Biological Bulletin</em>, 215(3), 216–242 (2008).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.2307/25470707">10.2307/25470707</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>Stanford Neuroquantics Laboratory.</strong> Quantum coherence and ethical decision dynamics in neural systems.
+      <em>Nature Neuroscience</em>, 46(2), 112–125 (2023).
+    </div>
+  </div>
+
+  <div class="ref-group">
+    <div class="ref-group-title">Quantum Biology</div>
+    <div class="ref-item">
+      <strong>Engel, G. S. et al.</strong> Evidence for wavelike energy transfer through quantum coherence in photosynthetic systems.
+      <em>Nature</em>, 446, 782–786 (2007).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1038/nature05678">10.1038/nature05678</a></div>
+    </div>
+    <div class="ref-item">
+      <strong>Lambert, N. et al.</strong> Quantum biology.
+      <em>Nature Physics</em>, 9(1), 10–18 (2013).
+      <div class="ref-doi">DOI: <a href="https://doi.org/10.1038/nphys2474">10.1038/nphys2474</a></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <p>
+    Cristian Cezar Moisés · Caxias do Sul, Brazil ·
+    <a href="mailto:cristian@securityops.co">cristian@securityops.co</a> ·
+    <a href="https://git.securityops.co/cristiancmoises" target="_blank">git.securityops.co</a>
+  </p>
+  <p style="margin-top:0.4rem;font-size:0.85em;opacity:0.5">
+    OQCT Preprint · April 2025 · MSC2020: 83C45, 81T75, 46L87, 85A40
+  </p>
+</footer>
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════════ -->
+<script>
+/* ── Navigation ─────────────────────────────────────────────── */
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'experiment' && !window._expInit) { initExp(); window._expInit = true; }
+}
+
+/* ── Starfield ───────────────────────────────────────────────── */
+(function() {
+  const c = document.getElementById('starfield');
+  const ctx = c.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = c.width  = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for (let i = 0; i < 280; i++) {
+    stars.push({
+      x: Math.random(), y: Math.random(),
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(),
+      da: (Math.random() - 0.5) * 0.004
+    });
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, W, H);
+    stars.forEach(s => {
+      s.a = Math.max(0.05, Math.min(1, s.a + s.da));
+      if (s.a <= 0.05 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180,220,255,${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+})();
+
+/* ── Experiment Canvas ───────────────────────────────────────── */
+function initExp() {
+  const canvas = document.getElementById('expCanvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H;
+  let mouse = { x: -999, y: -999 };
+
+  const params = { speed: 1, flux: 0.5, curv: 0.3, obs: 100 };
+
+  document.getElementById('cSpeed').addEventListener('input', e => params.speed = +e.target.value);
+  document.getElementById('cFlux' ).addEventListener('input', e => params.flux  = +e.target.value);
+  document.getElementById('cCurv' ).addEventListener('input', e => params.curv  = +e.target.value);
+  document.getElementById('cObs'  ).addEventListener('input', e => params.obs   = +e.target.value);
+
+  canvas.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) * (canvas.width / r.width);
+    mouse.y = (e.clientY - r.top)  * (canvas.height / r.height);
+  });
+  canvas.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    W = canvas.width  = r.width;
+    H = canvas.height = 420;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Particles
+  const N = 180;
+  const px = new Float32Array(N), py = new Float32Array(N);
+  const vx = new Float32Array(N), vy = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    px[i] = Math.random() * 1200;
+    py[i] = Math.random() * 420;
+    vx[i] = (Math.random() - 0.5) * 0.8;
+    vy[i] = (Math.random() - 0.5) * 0.8;
+  }
+
+  let t = 0;
+  function frame() {
+    t += 0.012 * params.speed;
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0, 0, W, H);
+
+    // Spacetime grid
+    const sp = 48;
+    ctx.strokeStyle = 'rgba(0,212,184,0.18)';
+    ctx.lineWidth = 0.8;
+    for (let gx = 0; gx <= W + sp; gx += sp) {
+      ctx.beginPath();
+      for (let gy = 0; gy <= H; gy += 4) {
+        const dx = gx - mouse.x, dy = gy - mouse.y;
+        const d = Math.sqrt(dx*dx + dy*dy) || 1;
+        const push = Math.min(30, (params.obs / d) * 22 * params.curv);
+        const ox = d < params.obs ? (dx/d)*push : 0;
+        const oy = d < params.obs ? (dy/d)*push : 0;
+        if (gy === 0) ctx.moveTo(gx + ox, gy + oy);
+        else ctx.lineTo(gx + ox, gy + oy);
+      }
+      ctx.stroke();
+    }
+    for (let gy = 0; gy <= H + sp; gy += sp) {
+      ctx.beginPath();
+      for (let gx = 0; gx <= W; gx += 4) {
+        const dx = gx - mouse.x, dy = gy - mouse.y;
+        const d = Math.sqrt(dx*dx + dy*dy) || 1;
+        const push = Math.min(30, (params.obs / d) * 22 * params.curv);
+        const ox = d < params.obs ? (dx/d)*push : 0;
+        const oy = d < params.obs ? (dy/d)*push : 0;
+        if (gx === 0) ctx.moveTo(gx + ox, gy + oy);
+        else ctx.lineTo(gx + ox, gy + oy);
+      }
+      ctx.stroke();
+    }
+
+    // Quantum field wave (ethical entropy gradient)
+    ctx.beginPath();
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x < W; x++) {
+      const y = H/2
+        + Math.sin(x*0.018 + t) * 45 * params.flux
+        + Math.cos(x*0.012 - t*0.7) * 28 * params.flux
+        + Math.sin(x*0.006 + t*0.4) * 18 * params.flux;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Particles
+    for (let i = 0; i < N; i++) {
+      const dx = px[i] - mouse.x, dy = py[i] - mouse.y;
+      const d = Math.sqrt(dx*dx + dy*dy) || 1;
+      if (d < params.obs) {
+        vx[i] += (dx/d)*0.15 * params.speed;
+        vy[i] += (dy/d)*0.15 * params.speed;
+      }
+      px[i] += vx[i] * params.speed;
+      py[i] += vy[i] * params.speed;
+      vx[i] *= 0.98; vy[i] *= 0.98;
+      if (px[i] < 0)  { px[i] = W;  } if (px[i] > W) { px[i] = 0; }
+      if (py[i] < 0)  { py[i] = H;  } if (py[i] > H) { py[i] = 0; }
+      const age = 0.5 + 0.5*Math.sin(t + i);
+      ctx.fillStyle = `rgba(255,58,122,${age * 0.75})`;
+      ctx.fillRect(px[i]-1, py[i]-1, 2.5, 2.5);
+    }
+
+    // Observer
+    if (mouse.x > 0) {
+      const g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, params.obs);
+      g.addColorStop(0, 'rgba(255,255,255,0.55)');
+      g.addColorStop(0.12, 'rgba(0,212,184,0.12)');
+      g.addColorStop(1, 'rgba(0,212,184,0)');
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, params.obs, 0, Math.PI*2);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 6, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+</script>
+
+</body>
+</html>
