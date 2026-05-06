@@ -1,0 +1,66 @@
+cff-version: 1.2.0
+title: >-
+  The Omnidimensional Quantum-Cosmological Theory (OQCT) —
+  Version 2: Mathematical Foundations Revised
+message: If you use this work, please cite it as below.
+type: article
+authors:
+  - given-names: Cristian Cezar
+    family-names: Moisés
+    email: ccm@riseup.net
+    affiliation: Independent Researcher, Caxias do Sul, Brazil
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.XXXXXXX
+    description: Zenodo DOI (replace XXXXXXX with assigned number)
+repository-code: https://github.com/cristiancmoises/oqct
+url: https://github.com/cristiancmoises/oqct
+abstract: >-
+  This is a substantially revised reformulation of the Omnidimensional
+  Quantum-Cosmological Theory (OQCT). Built on a 10-dimensional
+  non-commutative operator manifold M^10_QC = R^{1,3} × C^6 × H_Q with
+  an observer-coupling sector C^6 carrying SU(3) × U(1) gauge structure,
+  the theory recasts every previous assertion under explicit hypotheses
+  with rigorous proofs. New contributions include: a Lorentz-covariant
+  constant-θ formulation of the non-commutative algebra with proven
+  Jacobi identity and associative Moyal product; rigorous proofs of
+  non-negativity, joint concavity, and partial-trace monotonicity for
+  the observer-coupling entropy functional; derivation of the extended
+  Born rule from a POVM-Gleason theorem; two-loop beta function
+  computation with UV-attractive fixed point; derivation of the
+  black-hole logarithmic correction from the conformal anomaly; and a
+  rigorous proof that the temporal triality operator is essentially
+  self-adjoint with discrete Planck-unit spectrum. Five worked examples
+  and a transparent Status of the Theory table distinguish proven
+  theorems, falsifiable conjectures, and phenomenological fits.
+keywords:
+  - non-commutative geometry
+  - Moyal deformation
+  - quantum gravity
+  - operator manifold
+  - observer-coupling sector
+  - quantum entropy
+  - POVM-Gleason theorem
+  - renormalization group
+  - asymptotic safety
+  - black-hole entropy
+  - cosmological perturbations
+  - temporal triality
+license: CC-BY-4.0
+version: '2.0'
+date-released: '2026-05-05'
+preferred-citation:
+  type: article
+  authors:
+    - given-names: Cristian Cezar
+      family-names: Moisés
+  title: >-
+    The Omnidimensional Quantum-Cosmological Theory (OQCT) —
+    Version 2: Mathematical Foundations Revised
+  year: 2026
+  month: 5
+  doi: 10.5281/zenodo.XXXXXXX
+  url: https://github.com/cristiancmoises/oqct
+  notes: >-
+    Preprint v2.0 supersedes v1.0 (April 2025).
+    MSC2020: 83C45, 81T75, 46L87, 85A40, 81P15.
